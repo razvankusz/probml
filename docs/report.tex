@@ -1,0 +1,445 @@
+\documentclass[10pt,a4]{article}
+\usepackage[margin=1.3in]{geometry}
+\usepackage[UKenglish]{isodate}
+% can add citecolor = color below 
+\usepackage[colorlinks=true, linkcolor=red, citecolor=black, filecolor=magenta, urlcolor=blue]{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{combelow}
+\usepackage{cite}
+\usepackage[hyphenbreaks]{breakurl}
+
+
+
+\usepackage{cleveref}
+\crefformat{section}{\S#2#1#3} % see manual of cleveref, section 8.2.1
+\crefformat{subsection}{\S#2#1#3}
+\crefformat{subsubsection}{\S#2#1#3}
+
+% Custom colors
+\usepackage{color}
+\definecolor{deepblue}{rgb}{0,0,0.5}
+\definecolor{deepred}{rgb}{0.6,0,0}
+\definecolor{deepgreen}{rgb}{0,0.5,0}
+\definecolor{deeppurple}{rgb}{0.30,0.0,0.15}
+
+\usepackage{hyperref}
+\hypersetup{
+     colorlinks   = true,
+     citecolor    = deepblue,
+     linkcolor=deeppurple
+}
+
+\usepackage[ruled,commentsnumbered,lined]{algorithm2e} % code
+\DontPrintSemicolon
+
+\usepackage{tabu}  % thicker lines in tables
+\usepackage{float}
+\usepackage{bm}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{tikz}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%% BAYESIAN DIAGRAMS AND STUFF %%%%%%%%%%%%%%
+% tikzlibrary.code.tex
+%
+% Copyright 2010-2011 by Laura Dietz
+% Copyright 2012 by Jaakko Luttinen
+%
+% The MIT License
+%
+% See LICENSE file for more details.
+
+% Load other libraries
+\usetikzlibrary{shapes}
+\usetikzlibrary{fit}
+\usetikzlibrary{chains}
+\usetikzlibrary{arrows}
+
+% Latent node
+\tikzstyle{latent} = [circle,fill=white,draw=black,inner sep=1pt,
+minimum size=20pt, font=\fontsize{10}{10}\selectfont, node distance=1]
+% Observed node
+\tikzstyle{obs} = [latent,fill=gray!25]
+% Constant node
+\tikzstyle{const} = [rectangle, inner sep=0pt, node distance=1]
+% Factor node
+\tikzstyle{factor} = [rectangle, fill=black,minimum size=5pt, inner
+sep=0pt, node distance=0.4]
+% Deterministic node
+\tikzstyle{det} = [latent, diamond]
+
+% Plate node
+\tikzstyle{plate} = [draw, rectangle, rounded corners, fit=#1]
+% Invisible wrapper node
+\tikzstyle{wrap} = [inner sep=0pt, fit=#1]
+% Gate
+\tikzstyle{gate} = [draw, rectangle, dashed, fit=#1]
+
+% Caption node
+\tikzstyle{caption} = [font=\footnotesize, node distance=0] %
+\tikzstyle{plate caption} = [caption, node distance=0, inner sep=0pt,
+below left=5pt and 0pt of #1.south east] %
+\tikzstyle{factor caption} = [caption] %
+\tikzstyle{every label} += [caption] %
+
+%\pgfdeclarelayer{b}
+%\pgfdeclarelayer{f}
+%\pgfsetlayers{b,main,f}
+
+% \factoredge [options] {inputs} {factors} {outputs}
+\newcommand{\factoredge}[4][]{ %
+  % Connect all nodes #2 to all nodes #4 via all factors #3.
+  \foreach \f in {#3} { %
+    \foreach \x in {#2} { %
+      \path (\x) edge[-,#1] (\f) ; %
+      %\draw[-,#1] (\x) edge[-] (\f) ; %
+    } ;
+    \foreach \y in {#4} { %
+      \path (\f) edge[->, >={triangle 45}, #1] (\y) ; %
+      %\draw[->,#1] (\f) -- (\y) ; %
+    } ;
+  } ;
+}
+
+% \edge [options] {inputs} {outputs}
+\newcommand{\edge}[3][]{ %
+  % Connect all nodes #2 to all nodes #3.
+  \foreach \x in {#2} { %
+    \foreach \y in {#3} { %
+      \path (\x) edge [->, >={triangle 45}, #1] (\y) ;%
+      %\draw[->,#1] (\x) -- (\y) ;%
+    } ;
+  } ;
+}
+
+% \factor [options] {name} {caption} {inputs} {outputs}
+\newcommand{\factor}[5][]{ %
+  % Draw the factor node. Use alias to allow empty names.
+  \node[factor, label={[name=#2-caption]#3}, name=#2, #1,
+  alias=#2-alias] {} ; %
+  % Connect all inputs to outputs via this factor
+  \factoredge {#4} {#2-alias} {#5} ; %
+}
+
+% \plate [options] {name} {fitlist} {caption}
+\newcommand{\plate}[4][]{ %
+  \node[wrap=#3] (#2-wrap) {}; %
+  \node[plate caption=#2-wrap] (#2-caption) {#4}; %
+  \node[plate=(#2-wrap)(#2-caption), #1] (#2) {}; %
+}
+
+% \gate [options] {name} {fitlist} {inputs}
+\newcommand{\gate}[4][]{ %
+  \node[gate=#3, name=#2, #1, alias=#2-alias] {}; %
+  \foreach \x in {#4} { %
+    \draw [-*,thick] (\x) -- (#2-alias); %
+  } ;%
+}
+
+% \vgate {name} {fitlist-left} {caption-left} {fitlist-right}
+% {caption-right} {inputs}
+\newcommand{\vgate}[6]{ %
+  % Wrap the left and right parts
+  \node[wrap=#2] (#1-left) {}; %
+  \node[wrap=#4] (#1-right) {}; %
+  % Draw the gate
+  \node[gate=(#1-left)(#1-right)] (#1) {}; %
+  % Add captions
+  \node[caption, below left=of #1.north ] (#1-left-caption)
+  {#3}; %
+  \node[caption, below right=of #1.north ] (#1-right-caption)
+  {#5}; %
+  % Draw middle separation
+  \draw [-, dashed] (#1.north) -- (#1.south); %
+  % Draw inputs
+  \foreach \x in {#6} { %
+    \draw [-*,thick] (\x) -- (#1); %
+  } ;%
+}
+
+% \hgate {name} {fitlist-top} {caption-top} {fitlist-bottom}
+% {caption-bottom} {inputs}
+\newcommand{\hgate}[6]{ %
+  % Wrap the left and right parts
+  \node[wrap=#2] (#1-top) {}; %
+  \node[wrap=#4] (#1-bottom) {}; %
+  % Draw the gate
+  \node[gate=(#1-top)(#1-bottom)] (#1) {}; %
+  % Add captions
+  \node[caption, above right=of #1.west ] (#1-top-caption)
+  {#3}; %
+  \node[caption, below right=of #1.west ] (#1-bottom-caption)
+  {#5}; %
+  % Draw middle separation
+  \draw [-, dashed] (#1.west) -- (#1.east); %
+  % Draw inputs
+  \foreach \x in {#6} { %
+    \draw [-*,thick] (\x) -- (#1); %
+  } ;%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\cleanlookdateon
+
+\begin{document}
+\bibliographystyle{plain}
+
+\thispagestyle{empty}
+
+\newcommand{\HRulee}{\rule{\linewidth}{0.5mm}}
+
+\vfil
+
+{\raggedleft \large Razvan Kusztos \\}
+{\raggedleft \large Girton College \\}
+{\raggedleft \large \tt rek43@cam.ac.uk \\}
+
+\vspace{50pt}
+
+\begin{center}
+
+	{\Large \sc Computer Science Tripos, Part III \\}
+	\vspace{10pt}
+	{\Large \sc LE49: Probabilistic Machine Learning\\}
+	\vspace{20pt}
+	\HRulee \\[0.1cm]
+	\vspace{10pt}
+	{\LARGE \bf Dota2 Player Ranking Using Trueskill\texttrademark}
+	\HRulee \\[20pt]
+	{\LARGE  Report\\}
+	\vspace{20pt}
+	{\Large \today \\}
+	\vspace{40pt}
+\end{center}
+
+\vfill
+
+\begin{flushright}
+%TODO: add wordcount
+Word count: nana
+\end{flushright}
+	
+\newpage
+
+\section{Introduction}
+
+Player ranking has many important uses in competitive sports or games. Firstly, 
+they provide a basis of matchmaking systems, improving the experinces of both 
+player and watchers. They can lead to balanced games for the participants, while 
+keeping them dynamic for audiences. Secondly, ranking players can be used to determine 
+tournament qualification (such as the access to ranked matches in Dota2). Lastly, 
+ranking triggers the human ingrained response to competition, attracting players 
+to stay for longer, thus benefiting the industry.
+
+The essence of ranking algorithms is determining a real skill score for each 
+player, such that its magnitude is representative of the player's future 
+performances. In a probabilistic setting, these skills must also be depictive of 
+the probability of games' outcome.
+
+One of the most influential statistical ranking systems is due to Arpad Elo (1959) 
+\cite{elo1978rating}, and has been used extensively in chess ranking 
+\cite{glickman1995comprehensive}. In the online game scene, it has been used in 
+World of Warcraft's PvP\footnote{player vs. player} matchmaking 
+\footnote{\url{http://wowwiki.wikia.com/wiki/Arena_personal_rating}}. 
+
+The core of the \emph{Elo} algorithm is that each player's game performance  
+is normally distributed around their skill, $p \sim \mathcal{N}(skill, \beta^2)$.
+The probability that one player wins is then proportional to the probability that 
+its performance is higher than its adversary's.
+\begin{align*}
+	P(p_1 > p_2 | skill_1, skill_2) = \Phi\bigg(\frac{s_1 - s_2}{\sqrt{2}\beta}\bigg),
+\end{align*}
+where $\Phi$ is the cumulative density of a normalised Gaussian distribution. 
+
+
+Seen as improvements to \emph{Elo} are the \emph{Glicko} rating systems \cite{glickman1999parameter},
+\cite{glickman2012example}. They replace the constant variance parameter used by 
+\emph{Elo} system by shifting to a bayesian framework. In the setting, the player skill itself 
+is seen as coming from a prior distribution and, with each game, the uncertainty 
+(variance) of their skill decreases. 
+
+Unfortunately \emph{Glicko} is limited to single player games. Microsoft 
+TrueSkill\texttrademark  was developed to address this limitation, by allowing 
+individuals's skills to be updated given the team's performance, as well as considering
+games with more than 2 competing entities.
+
+An important question that needs yet to be addressed is how to enhance these existing
+systems by incorporating other information about the players, rather than just 
+win vs. loss information. For instance, in chess, incoroporate knowledge of whether 
+the player controls the black or the white. 
+A way in which this problem has been addressed is due to \emph{Zhang et al.} 
+\cite{zhang2010factor}. They suggested that an entity skill, rather than being 
+a single real value, could be understood as a vector of skill components: \emph{
+a virtual team of [the player's] various skills}. Of particular interest to the 
+current work is that they validate their algorithm on \emph{DotA}, a precursor of 
+the game I will discuss in this work.
+
+
+In the rest of this report, I will introduce factor graphs and the message passing 
+algorithms, necessary for understanding the \emph{TrueSkill\texttrademark}
+original implementation. I will then describe the assumptions made in the 
+\emph{TrueSkill\texttrademark} model. Next, I will introduce the particularities 
+of the \emph{Dota2} game, a multiplayer online battle arena (MOBA) that has been 
+part of the advent of e-sports. Lastly, I incorporate these considerations 
+into an implementation that I evaluate on both real and synthesized datasets.
+
+\section{Implementation} \label{impl}
+
+\subsection{Factor Graphs}
+
+The \emph{Factor Graph} is a graph-based graphical model. Like \emph{Markov Random Fields}
+or \emph{Bayesian Networks}, it is used to model multivariate probability distribution 
+while making explicit the conditional independence assumptions of the random variables.
+The \emph{Factor Graph} is based on a bipartite undirected graph with two types of nodes:
+The \textbf{variables} (depicted as circles), and the \textbf{factors} (depicted as squares).
+The factors represent functorial combinations of the neighbouring variables. The 
+bipartite structure is achieved by enforcing the constraint that edges can only
+connect nodes of different types.
+
+Another way to see it is that the factor graph expresses a factorisation of a 
+joint distribution.
+
+\begin{align*}
+	g(x_1, x_2, x_3, ..., x_n)=\sum_{j \in J}f_j(\textbf{x}_j)
+\end{align*}
+Where $J$ is the set of factors and $\textbf{x}_j$ is the list of variables that 
+are adjoint to the node represending the factor $f_j$.
+
+We are generally interested in performing marginalisation. This is usually 
+required in practise, for example when computing likelyhood functions.
+
+\begin{align*}
+	g_i(x_i) = \sum_{x_j, j \neq i}g(x_1, x_2, ... x_n)
+\end{align*}
+
+\subsection{Message Passing}
+
+Marginalisation approximations are performed using the so called \emph{sum-product algorithm}. 
+Also called \emph{Belief propagation}\cite{pearl1982reverend}, this algorithm was designed
+to be a general, easily paralellisable, exact inference of graphical model
+based on trees. However, it is known to provide approximations on general graphs
+\cite{pearl2014probabilistic}, including cyclic graphs \cite{murphy1999loopy}.
+
+It has been shown that this algorithm is an instance of the 
+\emph{Expectation propagation}\cite{minka2001expectation} on factor graphs. 
+The algorithm approximates marginals by propagating \emph{messages} along the 
+edges of the factor graphs. In the context of \emph{Expectation propagation}, 
+messages are nothing but factor approximations obtained in the main loop of the 
+algorithm \cite{minka2001expectation}.
+
+Concretely, message passing can be defined through the following equations:
+\begin{align*}
+	p(v_i) &= \prod_{f \in {F_{v_i}}}m_{f \to v_i}(v_i)  \\
+	m_{f \to v_i}(v_i) &= \int...\int f(\textbf{v}) \prod_{i \neq j}m_{v_j \to f}(v_i)dv_j \\
+	m_{v_i \to f}(v_i) &= \frac{p(v_i)}{m_{f \to v_i}} 
+\end{align*}
+In the previous, $f$ refers to a factor and $v$ to a variable node. I use the 
+standard notation $m_{f \to v}$ to represent the message from node $f$ to node $v$.
+
+\subsection{TrueSkill Implementation}
+
+For simplification, I will introduce this problem with no-draw games consisting 
+of two teams, each with two players. 
+
+We model all players skills as being drawn from a prior distribution. This encodes
+the knowledge we have about the players before begining to analyse their game 
+outcomes. Then, we calculate the team performance as being the sum of the 
+members' skills with an added \emph{Gaussian noise}, representing an \emph{luck}
+element. Lastly, the probability of the team winning, is given by the probability 
+the first team's performance is higher than the second team's performance
+
+\begin{figure}[ht]
+	\begin{center}
+	  	\input{standard_trueskill}
+	\end{center}
+	\caption{Original TrueSkill\texttrademark  model for a game with two teams of
+	two members each. Note that, in the above I only show a small part of the full graph, 
+	related to a single game. In reality, we have $N$ players and $G$ games.
+	}
+	\label{fig:stdts}
+\end{figure}
+
+We are interested in computing the marginal distribution, 
+$
+\mathbb{P}(s_i | \mathbf{s}, \mathbf{t}, \mathbf{y})
+$ for each player i. We can do these by applying the sum product algorithm. 
+The derivation of the message passing equation is an exercise in \emph{Gaussian}
+distribution manipulations \cite{herbrich2007trueskill}. 
+Notice however that we need to make two further approximations. 
+
+Firstly, because 
+of the presence of cyclic structures (since the same player can take part in 
+multiple games), we will have to make use of the \emph{loopy belief propagation}
+ideas and iterate a few times through the steps of the algorithm. 
+
+Secondly, the 
+efficiency of \emph{expectantion propagation} is based on having to propagate few 
+moments through the network. In the case of the \emph{normal distribution}, two moments
+suffice ($\mu$ and $\sigma$). However, for the factor computing $\mathbb{I}(t_0 > t_1)$,
+we can apply \emph{moment matching} to approximate its result to a \emph{Gaussian}. 
+This reduces to applying \emph{moment matching} on a truncated \emph{Gaussian}, say:
+$t \sim \frac{1}{Z_t}\delta (t > 0) \mathcal{N}(t; \mu ,\sigma ^2)$. By using the 
+notation:
+\begin{align*}
+	\Psi(z) &= \frac{\mathcal{N}(z;0, 1)}{\Phi(z)} \\
+	\Lambda(z) &= \Psi(z)(\Psi(z) + z), \\
+\intertext{We can approximate the distribution of $t$ by a Gaussian whose moments 
+are \footnotemark:} 
+	\mathbb{E}(t) &= \mu + \sigma\Psi(\frac{\mu}{\sigma}) \\ 
+	\text{Var}(t) &= \sigma ^ 2 (1 - \Lambda(\frac{\mu}{\sigma}))
+\end{align*}
+\footnotetext{\url{http://mlg.eng.cam.ac.uk/teaching/4f13/1718}}
+
+Notice that under this model, the only factors that are open to modification are  
+the prior distribution of the skills and the outcome of the game. There is no other
+way to incorporate new assumptions that are valid in particular games we apply
+this model to.
+In the following, I will present a few simple modification that could better
+fit the game of DotA2, as well as validate them on syntesized and real datasets.
+
+\subsection{DotA2}
+
+Dota2 (Defence of the Ancients 2) is a Multiplayer Online Battle Arena(MOBA). 
+The \emph{Arena} is a square map 
+containing two adversary bases on opposite corners, united by three lanes heavily
+guarded by turrets. There are two teams, refered to as the \emph{Radiance} and \emph{Dire},
+each of which is composed of five human players. The goal of a team is to infiltrate 
+the enemy base and destroy their \emph{Ancient}, a static structure. Upon achieving
+this feat, the game terminates.
+
+Each human player controls a \emph{hero} which they can chose before the game commences.
+The \emph{heros} are all difference, requiring particular strategies. During 
+clashes between teams, \emph{heros} might get killed, which confers their slayers
+\emph{gold} and \emph{experience}. Upon death, \emph{heros} \emph{respawn} after 
+a penalty time during which the player can only observe the game. 
+
+Although this is an incomplete description of the game\footnote{\url{https://dota2.gamepedia.com/Dota_2_Wiki}}
+, it suffices for understanding the metrics provided by specialised datasets, such as: 
+duration of the game, hero name, kills, deaths, gold per minute, xp per minute etc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+\newpage
+\bibliography{references}
+\end{document}

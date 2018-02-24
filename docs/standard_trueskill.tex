@@ -1,0 +1,46 @@
+\begin{tikzpicture}[x=1.0cm,y=1.0cm]
+
+	\matrix[row sep=0.3cm, column sep=0.1cm] (LDA)
+	{ %
+	  \factor      {prior0}  {$\mathcal{N}(s_0; \mu _0, \sigma _0^2)$} {} {}; & &
+	  \factor      {prior1}  {$\mathcal{N}(s_1; \mu _1, \sigma _1^2)$} {} {}; & &
+	  \factor      {prior2}  {$\mathcal{N}(s_2; \mu _2, \sigma _2^2)$} {} {}; & &
+	  \factor      {prior3}  {$\mathcal{N}(s_3; \mu _3, \sigma _3^2)$} {} {};  
+	  \\
+	  \node[latent] (skill0)  {$s_0$} ; & & 
+	  \node[latent] (skill1)  {$s_1$} ; & &
+	  \node[latent] (skill2)  {$s_2$} ; & &
+	  \node[latent] (skill3)  {$s_3$} ;
+	  \\
+	  & %
+	  \factor       {team0}   {$\mathcal{N}(t_0; s_0 + s_1, \beta ^2)$} {} {}; & & & & %
+	  \factor       {team1}   {$\mathcal{N}(t_0; s_2 + s_3, \beta ^2)$} {} {}; & %
+	  \\
+	  &
+	  \node[latent] (performance0)   {$t_0$} ; & & & & %
+	  \node[latent] (performance1)   {$t_1$} ; & %
+	  \\
+	  & & & %
+	  \factor       {cutout}   {$\mathbb{I}(t_0 > t_1)$} {} {}; %
+	  \\
+	  & & & 
+	  \node[obs] (outcome)   {$y$} ;  %
+	  \\
+	};
+  
+	\factoredge {prior0} {skill0} {};
+	\factoredge {prior1} {skill1} {};
+	\factoredge {prior2} {skill2} {};
+	\factoredge {prior3} {skill3} {};
+		
+	\factoredge {skill0, skill1} {team0} {};
+	\factoredge {skill2, skill3} {team1} {};
+
+	\factoredge {team0} {performance0} {};
+	\factoredge {team1} {performance1} {};
+
+	\factoredge {performance0, performance1} {cutout} {};
+
+	\factoredge {cutout} {outcome} {};
+
+\end{tikzpicture}	

@@ -610,7 +610,7 @@ def gaussian_ep_model3(match_history, players, priors=None):
         assert((sum_of_inverse(p_sg_loss) < 0).sum() == 0)
         assert((sum_of_inverse(p_sg_win) < 0).sum() == 0)
 
-        # v_gt = 1 + sum_of_inverse(p_sg_win) + sum_of_inverse(p_sg_loss)
+        v_gt = 1 + sum_of_inverse(p_sg_win) + sum_of_inverse(p_sg_loss)
         # assert((v_gt < 0).sum() == 0)
 
         assert(count_nans(v_gt) == 0)
@@ -643,12 +643,12 @@ def gaussian_ep_model3(match_history, players, priors=None):
         # 6. Compute game -> skills messages
 
         p_gs[:, 0] = 1 / \
-            (1 + 1 / p_tg + sum_of_inverse(p_sg_loss)
-             * np.power(losing_team_counts, -2))
+            (1 + 1 / p_tg + sum_of_inverse(p_sg_loss))
+        #  * np.power(losing_team_counts, -2))
         # assert(count_nans(p_gs[:, 0]) == 0)
         p_gs[:, 1] = 1 / \
-            (1 + 1 / p_tg + sum_of_inverse(p_sg_win)
-             * np.power(winning_team_counts, -2))
+            (1 + 1 / p_tg + sum_of_inverse(p_sg_win))
+        #  * np.power(winning_team_counts, -2))
         # assert(count_nans(p_gs[:, 1]) == 0)
         mu_gs[:, 0] = sum_0(mu_sg_loss) / losing_team_counts + mu_tg
         # assert(count_nans(mu_gs[:, 0]) == 0)
@@ -898,7 +898,7 @@ def run_model_3(index=0):
 
 def main():
     print('Preparing Data')
-    run_model_4_hero(index=8)
+    run_model_3(index=8)
 
 
 if __name__ == '__main__':

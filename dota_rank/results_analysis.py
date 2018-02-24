@@ -30,11 +30,11 @@ def guess_winner(score_1, score_2):
     mu_1, sigma_1 = score_1
     mu_2, sigma_2 = score_2
 
-    result = np.random.normal(loc=mu_1 - mu_2, scale=sigma_1 + sigma_2)
+    result = np.random.normal(loc=mu_1 - mu_2, scale=1)
 
     # return 1 if np.random.randint(2) == 1 else 2
-    return 1 if mu_1 > mu_2 else 2
-    # return 1 if result > 0 else 2
+    # return 1 if mu_1 > mu_2 else 2
+    return 1 if result > 0 else 2
 
 
 def score(match_history, team_score, ranks):
@@ -92,6 +92,7 @@ def main():
     id = '_3_7'
     id = '_5_7'
     id = '_4hero_8'
+    id = '_3_8'
     mus = np.loadtxt(RESULTS_PATH_MU.format(id), delimiter=",").T
     sigmas = np.loadtxt(RESULTS_PATH_SIGMAS.format(id), delimiter=",").T
 

@@ -1,0 +1,64 @@
+\begin{thebibliography}{10}
+
+\bibitem{elo1978rating}
+Arpad~E Elo.
+\newblock {\em The rating of chessplayers, past and present}.
+\newblock Arco Pub., 1978.
+
+\bibitem{glickman1995comprehensive}
+Mark~E Glickman.
+\newblock A comprehensive guide to chess ratings.
+\newblock {\em American Chess Journal}, 3:59--102, 1995.
+
+\bibitem{glickman1999parameter}
+Mark~E Glickman.
+\newblock Parameter estimation in large dynamic paired comparison experiments.
+\newblock {\em Journal of the Royal Statistical Society: Series C (Applied
+  Statistics)}, 48(3):377--394, 1999.
+
+\bibitem{glickman2012example}
+Mark~E Glickman.
+\newblock Example of the glicko-2 system.
+\newblock {\em Boston University}, 2012.
+
+\bibitem{herbrich2007trueskill}
+Ralf Herbrich, Tom Minka, and Thore Graepel.
+\newblock Trueskill™: a bayesian skill rating system.
+\newblock In {\em Advances in neural information processing systems}, pages
+  569--576, 2007.
+
+\bibitem{minka2001expectation}
+Thomas~P Minka.
+\newblock Expectation propagation for approximate bayesian inference.
+\newblock In {\em Proceedings of the Seventeenth conference on Uncertainty in
+  artificial intelligence}, pages 362--369. Morgan Kaufmann Publishers Inc.,
+  2001.
+
+\bibitem{murphy1999loopy}
+Kevin~P Murphy, Yair Weiss, and Michael~I Jordan.
+\newblock Loopy belief propagation for approximate inference: An empirical
+  study.
+\newblock In {\em Proceedings of the Fifteenth conference on Uncertainty in
+  artificial intelligence}, pages 467--475. Morgan Kaufmann Publishers Inc.,
+  1999.
+
+\bibitem{pearl1982reverend}
+Judea Pearl.
+\newblock {\em Reverend Bayes on inference engines: A distributed hierarchical
+  approach}.
+\newblock Cognitive Systems Laboratory, School of Engineering and Applied
+  Science, University of California, Los Angeles, 1982.
+
+\bibitem{pearl2014probabilistic}
+Judea Pearl.
+\newblock {\em Probabilistic reasoning in intelligent systems: networks of
+  plausible inference}.
+\newblock Elsevier, 2014.
+
+\bibitem{zhang2010factor}
+Lei Zhang, Jun Wu, Zhong-Cun Wang, and Chong-Jun Wang.
+\newblock A factor-based model for context-sensitive skill rating systems.
+\newblock In {\em Tools with Artificial Intelligence (ICTAI), 2010 22nd IEEE
+  International Conference on}, volume~2, pages 249--255. IEEE, 2010.
+
+\end{thebibliography}
