@@ -4,3 +4,7 @@
 \BOOKMARK [2][-]{subsection.2.2}{Message Passing}{section.2}% 4
 \BOOKMARK [2][-]{subsection.2.3}{TrueSkill Implementation}{section.2}% 5
 \BOOKMARK [2][-]{subsection.2.4}{DotA2}{section.2}% 6
+\BOOKMARK [3][-]{subsubsection.2.4.1}{Dota2 Ranking Dataset.}{subsection.2.4}% 7
+\BOOKMARK [2][-]{subsection.2.5}{Assumptions about the data}{section.2}% 8
+\BOOKMARK [3][-]{subsubsection.2.5.1}{Matchmaking bias}{subsection.2.5}% 9
+\BOOKMARK [3][-]{subsubsection.2.5.2}{Anonymous players}{subsection.2.5}% 10

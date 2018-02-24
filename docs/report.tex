@@ -426,6 +426,45 @@ Although this is an incomplete description of the game\footnote{\url{https://dot
 , it suffices for understanding the metrics provided by specialised datasets, such as: 
 duration of the game, hero name, kills, deaths, gold per minute, xp per minute etc.
 
+\subsubsection{Dota2 Ranking Dataset.}
+
+For running experiment in following sections, I will be using a \emph{Kaggle}-hosted
+dataset \footnote{\url{https://www.kaggle.com/owajawa/dota-2-skill-rating-with-trueskill/data}},
+created by querying the OpenDota service \footnote{\url{https://www.opendota.com/}}.
+This dataset contains metadata about matches (e.g. duration, geographic information
+), as well about some of the players that took part in it (e.g. level, experience, 
+gold, damage dealt, the hero chosen, deaths, kills etc.). Furthermore, it contains
+timestamps of all the events that took part in the game, such as items bought, 
+and even the text log. As the data is very rich, constructing a probabilistic model
+that integrates all these variables would require some amount of domain knowledge. 
+Nontheless, in the next sections, I will outline a few assumptions that we can
+check about the data. 
+
+\subsection{Assumptions about the data}
+
+\subsubsection{Matchmaking bias}
+The platform implements a matchmaking routine \footnote{\url{https://dev.dota2.com/showthread.php?t=129665}}.
+Also based on a probabilistic assumption, their algorithm assigns skill levels,
+called MMR - Match Making Rating. This number, originally starting at the value of 
+3000 is increased with every win and decresed with every loss. The difference depends
+on the MMR difference between the two teams. 
+
+Players will only play games with peers of a similar skill. This contradicts the 
+independence assumption between the players.  
+
+Moreover, the dataset is collected from \emph{Ranked matches}, which only allow 
+access to experienced players.
+
+\subsubsection{Anonymous players}
+A substantial amount TODO of players can choose to play anonymously, accounting to 
+TODO of matches. In this case, the system does not preserve any identification that 
+could trace back the individual from the gameplay information. This turns out 
+to be a critical problem in modelling the calculation of \emph{team performances}.
+
+
+
+
+
 
 
 
