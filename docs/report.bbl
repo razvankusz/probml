@@ -21,6 +21,12 @@ Mark~E Glickman.
 \newblock Example of the glicko-2 system.
 \newblock {\em Boston University}, 2012.
 
+\bibitem{guyon2002gene}
+Isabelle Guyon, Jason Weston, Stephen Barnhill, and Vladimir Vapnik.
+\newblock Gene selection for cancer classification using support vector
+  machines.
+\newblock {\em Machine learning}, 46(1-3):389--422, 2002.
+
 \bibitem{herbrich2007trueskill}
 Ralf Herbrich, Tom Minka, and Thore Graepel.
 \newblock Trueskill™: a bayesian skill rating system.
